@@ -8,9 +8,8 @@ import exceltodvm.model.Load;
  *
  */
 public class App {
-	private static Load archivo;
 	public static void main(String[] args) {
-		archivo = new Load();
+		Load archivo = new Load();
 		if(!archivo.getRutaArchivo().isEmpty()) {
 			Transformador app=new Transformador(archivo.getRutaArchivo());
 			app.leerFilas();
