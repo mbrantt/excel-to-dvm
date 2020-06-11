@@ -3,6 +3,10 @@ package exceltodvm.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,6 +41,12 @@ public class Transformador {
 		    					fila.add("<cell>"+value+"</cell>");
 		    	                break;
 		    	            default:
+		    	            	/*
+		    	            	if(cell.getRow().getLastCellNum()==1)
+		    	            		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
+		    	            	else
+		    	            		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
+		    	                */
 		    	                break;
 	    				}
 	    			}
@@ -50,12 +60,10 @@ public class Transformador {
     		System.out.println("ERROR: "+e.getMessage());
     	}      
 	}
-	public void leerFilas() {
-		for(int numFila=0; numFila < dvm.getData().size(); numFila++) {
-			for(int columna=0; columna < dvm.getData().get(numFila).size(); columna++) {
-				System.out.println(dvm.getData().get(numFila).get(columna));
-			}
-		}
+	public StringBuilder getAllRowDVMFormat() {
+		StringBuilder dvmBody = new StringBuilder();
+		dvm.getData().stream().flatMap(numFila -> numFila.stream()).forEach(column -> dvmBody.append(column).append(System.lineSeparator()));
+		return dvmBody;
 	}
 	public void leerDVM() {
 		

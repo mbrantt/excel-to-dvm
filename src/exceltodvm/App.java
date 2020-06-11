@@ -12,7 +12,7 @@ public class App {
 		Load archivo = new Load();
 		if(!archivo.getRutaArchivo().isEmpty()) {
 			Transformador app=new Transformador(archivo.getRutaArchivo());
-			app.leerFilas();
+			System.out.println(app.getAllRowDVMFormat());
 		}
 		
 	}
