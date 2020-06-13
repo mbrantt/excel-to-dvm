@@ -2,9 +2,10 @@ package exceltodvm.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.LongAdder;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -77,5 +78,16 @@ public class Convert {
 		dvmHead.append("<rows>").append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>");
 		dvmHead.append("</dvm>");
 		return dvmHead;
+	}
+	public void saveDocumentFile(File file) {
+		try(FileOutputStream fOut = new FileOutputStream(file)) {
+			fOut.write(getAllDocument().toString().getBytes());
+	        fOut.flush();
+		} catch (FileNotFoundException e) {
+			System.out.println("File Error: " + e);
+		} catch (IOException e) {
+			System.out.println("Error: " + e);
+		}
+        
 	}
 }

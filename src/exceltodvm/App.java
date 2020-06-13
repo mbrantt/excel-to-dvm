@@ -12,7 +12,8 @@ public class App {
 		Load archivo = new Load();
 		if(!archivo.getRutaArchivo().isEmpty()) {
 			Convert app=new Convert(archivo.getRutaArchivo());
-			System.out.println(app.getAllRowDVMFormat());
+			//System.out.println(app.getAllRowDVMFormat());
+			app.getAllDocument();
 		}
 		
 	}
