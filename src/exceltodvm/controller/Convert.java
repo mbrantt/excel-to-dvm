@@ -3,6 +3,8 @@ package exceltodvm.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -58,10 +60,22 @@ public class Convert {
 	}
 	public StringBuilder getAllRowDVMFormat() {
 		StringBuilder dvmBody = new StringBuilder();
-		dvm.getData().stream().flatMap(numFila -> numFila.stream()).forEach(column -> dvmBody.append(column).append(System.lineSeparator()));
+		dvm.getData().stream().flatMap(numFila -> numFila.stream()).forEach(cell -> dvmBody.append(cell).append(System.lineSeparator()));
 		return dvmBody;
 	}
-	public void leerDVM() {
-		
+	public StringBuilder getAllDocument() {
+		StringBuilder dvmHead = new StringBuilder();
+		int lengthColumnHead = dvm.getData().get(0).stream().mapToInt(t -> t.length()).sum();
+		dvmHead.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append(System.lineSeparator());
+		dvmHead.append("<dvm name=\""+dvm.getNombre()+"\" xmlns=\"http://xmlns.oracle.com/dvm\">").append(System.lineSeparator());
+		dvmHead.append("<description>"+dvm.getDescripcion()+"</description>").append(System.lineSeparator());
+		dvmHead.append("<columns>").append(System.lineSeparator());
+		dvm.getData().get(0).stream()
+			.filter(cell -> cell.contains("<cell>"))
+			.forEach(column -> dvmHead.append("<column name=\""+column.substring(6, column.length()-7)+"\"/>"));
+		dvmHead.append("</columns>").append(System.lineSeparator());
+		dvmHead.append("<rows>").append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>");
+		dvmHead.append("</dvm>");
+		return dvmHead;
 	}
 }
