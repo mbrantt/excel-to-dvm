@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,6 +21,7 @@ public class Convert {
 	private DVM dvm;
 	private ArrayList<String> fila;
 	private String value;
+	private static final Logger logger = LogManager.getLogger(Convert.class);
 	
 	public Convert(String rutaArchivo) {
 		try (FileInputStream excel = new FileInputStream(new File(rutaArchivo))) {
@@ -56,7 +60,7 @@ public class Convert {
 			}
     		
     	} catch (Exception e) {
-    		System.out.println("ERROR: "+e.getMessage());
+    		logger.error("ERROR: "+e.getMessage());
     	}      
 	}
 	public StringBuilder getAllRowDVMFormat() {
@@ -65,28 +69,29 @@ public class Convert {
 		return dvmBody;
 	}
 	public StringBuilder getAllDocument() {
-		StringBuilder dvmHead = new StringBuilder();
+		StringBuilder dvmDocument = new StringBuilder();
 		int lengthColumnHead = dvm.getData().get(0).stream().mapToInt(t -> t.length()).sum();
-		dvmHead.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append(System.lineSeparator());
-		dvmHead.append("<dvm name=\""+dvm.getNombre()+"\" xmlns=\"http://xmlns.oracle.com/dvm\">").append(System.lineSeparator());
-		dvmHead.append("<description>"+dvm.getDescripcion()+"</description>").append(System.lineSeparator());
-		dvmHead.append("<columns>").append(System.lineSeparator());
+		dvmDocument.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append(System.lineSeparator())
+			.append("<dvm name=\""+dvm.getNombre()+"\" xmlns=\"http://xmlns.oracle.com/dvm\">").append(System.lineSeparator())
+			.append("<description>"+dvm.getDescripcion()+"</description>").append(System.lineSeparator())
+			.append("<columns>").append(System.lineSeparator());
 		dvm.getData().get(0).stream()
 			.filter(cell -> cell.contains("<cell>"))
-			.forEach(column -> dvmHead.append("<column name=\""+column.substring(6, column.length()-7)+"\"/>"));
-		dvmHead.append("</columns>").append(System.lineSeparator());
-		dvmHead.append("<rows>").append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>");
-		dvmHead.append("</dvm>");
-		return dvmHead;
+			.forEach(column -> dvmDocument.append("<column name=\""+column.substring(6, column.length()-7)+"\"/>"));
+		dvmDocument.append("</columns>").append(System.lineSeparator())
+			.append("<rows>").append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>")
+			.append("</dvm>");
+		logger.info(dvmDocument);
+		return dvmDocument;
 	}
 	public void saveDocumentFile(File file) {
 		try(FileOutputStream fOut = new FileOutputStream(file)) {
 			fOut.write(getAllDocument().toString().getBytes());
 	        fOut.flush();
 		} catch (FileNotFoundException e) {
-			System.out.println("File Error: " + e);
+			logger.error("File Error: %s", e);
 		} catch (IOException e) {
-			System.out.println("Error: " + e);
+			logger.error("Error: %s", e);
 		}
         
 	}

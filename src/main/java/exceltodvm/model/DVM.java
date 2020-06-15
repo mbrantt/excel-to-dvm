@@ -1,6 +1,7 @@
 package exceltodvm.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DVM {
 	private String nombre;
@@ -8,7 +9,7 @@ public class DVM {
 	private ArrayList<ArrayList<String>> row;
 	
 	public DVM() {
-		row = new ArrayList<ArrayList<String>>();
+		row = new ArrayList<>();
 	}
 
 	public DVM(String nombre) {
@@ -20,7 +21,7 @@ public class DVM {
 		this.descripcion = descripcion;
 	}
 
-	public ArrayList<ArrayList<String>> getData() {
+	public List<ArrayList<String>> getData() {
 		return row;
 	}
 
