@@ -5,7 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,11 +29,19 @@ public class Convert {
 	private static final Logger logger = LogManager.getLogger(Convert.class);
 	
 	public Convert(String rutaArchivo) {
-		try (FileInputStream excel = new FileInputStream(new File(rutaArchivo))) {
+		try (InputStream excel = new FileInputStream(new File(rutaArchivo))) {
 			try (XSSFWorkbook worbook = new XSSFWorkbook(excel)) {
 	    		XSSFSheet sheet = worbook.getSheetAt(0);
-	    		dvm = new DVM();
+	    		
 	    		FormulaEvaluator formulaEvaluator = worbook.getCreationHelper().createFormulaEvaluator();
+	    		
+	    		fila = new ArrayList<>();
+	    		List<Row> rowList = StreamSupport.stream(sheet.spliterator(), false).collect(Collectors.toList());
+	    		rowList.stream().flatMap(row -> StreamSupport.stream(row.spliterator(), false))
+	    					.map(cell -> cell.getStringCellValue())
+	    					.forEach(System.out::println);
+	    		//logger.debug(r);
+	    		/**
 	    		for(Row row: sheet) {
 	    			fila = new ArrayList<>();
 	    			fila.add("<row>");
@@ -44,19 +57,21 @@ public class Convert {
 		    					fila.add("<cell>"+value+"</cell>");
 		    	                break;
 		    	            default:
-		    	            	/*
-		    	            	if(cell.getRow().getLastCellNum()==1)
-		    	            		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
-		    	            	else
-		    	            		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
-		    	                */
-		    	                break;
+		    	            	
+		    	            //	if(cell.getRow().getLastCellNum()==1)
+		    	            //		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
+		    	            //	else
+		    	            //		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
+		    	            //    break;
 	    				}
 	    			}
+		
 	    			fila.add("</row>");
+	    			dvm = new DVM();
 	    			dvm.setRow(fila);
+	    			
 	    		}
-	    		
+	    		*/
 			}
     		
     	} catch (Exception e) {
@@ -81,7 +96,7 @@ public class Convert {
 		dvmDocument.append("</columns>").append(System.lineSeparator())
 			.append("<rows>").append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>")
 			.append("</dvm>");
-		logger.info(dvmDocument);
+		//logger.info(dvmDocument);
 		return dvmDocument;
 	}
 	public void saveDocumentFile(File file) {
