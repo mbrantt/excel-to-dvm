@@ -25,57 +25,26 @@ import exceltodvm.model.DVM;
 public class Convert {
 	private DVM dvm;
 	private ArrayList<String> fila;
-	private String value;
 	private static final Logger logger = LogManager.getLogger(Convert.class);
 	
 	public Convert(String rutaArchivo) {
 		try (InputStream excel = new FileInputStream(new File(rutaArchivo))) {
 			try (XSSFWorkbook worbook = new XSSFWorkbook(excel)) {
 	    		XSSFSheet sheet = worbook.getSheetAt(0);
-	    		
-	    		FormulaEvaluator formulaEvaluator = worbook.getCreationHelper().createFormulaEvaluator();
-	    		
-	    		fila = new ArrayList<>();
-	    		List<Row> rowList = StreamSupport.stream(sheet.spliterator(), false).collect(Collectors.toList());
-	    		rowList.stream().flatMap(row -> StreamSupport.stream(row.spliterator(), false))
-	    					.map(cell -> cell.getStringCellValue())
-	    					.forEach(System.out::println);
-	    		//logger.debug(r);
-	    		/**
-	    		for(Row row: sheet) {
+	    		dvm = new DVM();
+	    		List<Row> sheetList = StreamSupport.stream(sheet.spliterator(), false).collect(Collectors.toList());
+	    		sheetList.stream().map(rowList -> {
+	    			List<Cell> cellList= StreamSupport.stream(rowList.spliterator(), false).collect(Collectors.toList());
 	    			fila = new ArrayList<>();
-	    			fila.add("<row>");
-	    			for(Cell cell: row) {
-	    				switch(formulaEvaluator.evaluateInCell(cell).getCellTypeEnum()) {
-		    				case NUMERIC:
-		    					value = Double.toString(cell.getNumericCellValue());
-		    					String[] val = value.split("\\.");
-		    					fila.add("<cell>"+val[0]+"</cell>");
-		    	                break;
-		    	            case STRING:
-		    	            	value = cell.getStringCellValue();
-		    					fila.add("<cell>"+value+"</cell>");
-		    	                break;
-		    	            default:
-		    	            	
-		    	            //	if(cell.getRow().getLastCellNum()==1)
-		    	            //		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
-		    	            //	else
-		    	            //		fila.add("<cell>WARNING: cell "+(cell.getRow().getRowNum() + 1)+", column "+cell.getRow().getLastCellNum()+" is BLANK</cell>");
-		    	            //    break;
-	    				}
-	    			}
-		
-	    			fila.add("</row>");
-	    			dvm = new DVM();
+	    			fila.add("<row>");cellList.forEach(cell -> fila.add("<cell>"+cell+"</cell>"));fila.add("</row>");
 	    			dvm.setRow(fila);
-	    			
-	    		}
-	    		*/
+	    			return cellList.stream();}).collect(Collectors.toList());
+    			logger.info(dvm.getData().get(0));
+
 			}
     		
     	} catch (Exception e) {
-    		logger.error("ERROR: "+e.getMessage());
+    		logger.error("Error: %s",e.getMessage());
     	}      
 	}
 	public StringBuilder getAllRowDVMFormat() {
@@ -92,11 +61,11 @@ public class Convert {
 			.append("<columns>").append(System.lineSeparator());
 		dvm.getData().get(0).stream()
 			.filter(cell -> cell.contains("<cell>"))
-			.forEach(column -> dvmDocument.append("<column name=\""+column.substring(6, column.length()-7)+"\"/>"));
+			.forEach(columnName -> dvmDocument.append("<column name=\""+columnName.substring(6, columnName.length()-7)+"\"/>"));
 		dvmDocument.append("</columns>").append(System.lineSeparator())
 			.append("<rows>").append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>")
 			.append("</dvm>");
-		//logger.info(dvmDocument);
+		logger.info(dvmDocument);
 		return dvmDocument;
 	}
 	public void saveDocumentFile(File file) {
