@@ -70,5 +70,11 @@ public abstract class Archive implements ArchiveInterface{
 	public void setName(String name) {
 		this.name = name;
 	}
+	public File getLoadFile() {
+		return loadFile;
+	}
+	public void setLoadFile(File loadFile) {
+		this.loadFile = loadFile;
+	}
 
 }
