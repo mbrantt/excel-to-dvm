@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class Archive implements ArchiveInterface{
 	private String name;
+	private String description;
 	private String pathDestination;
 	private String pathOrigin;
 	private File loadFile;
@@ -75,6 +76,12 @@ public abstract class Archive implements ArchiveInterface{
 	}
 	public void setLoadFile(File loadFile) {
 		this.loadFile = loadFile;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
