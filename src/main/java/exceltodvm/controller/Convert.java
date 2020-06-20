@@ -2,9 +2,6 @@ package exceltodvm.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,16 +66,5 @@ public class Convert {
 			.append("</dvm>");
 		logger.info(dvmDocument);
 		return dvmDocument;
-	}
-	public void saveDocumentFile(File file) {
-		try(FileOutputStream fileOut = new FileOutputStream(file)) {
-			fileOut.write(getAllDocument().toString().getBytes());
-			fileOut.flush();
-		} catch (FileNotFoundException e) {
-			logger.error("File Error: %s", e);
-		} catch (IOException e) {
-			logger.error("Error: %s", e);
-		}
-        
 	}
 }
