@@ -18,18 +18,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import exceltodvm.model.DVM;
+import exceltodvm.model.DomainValueMap;
 
 public class Convert {
-	private DVM dvm;
+	private DomainValueMap archiveDVM;
 	private ArrayList<String> fila;
 	private static final Logger logger = LogManager.getLogger(Convert.class);
 	
-	public Convert(String rutaArchivo) {
-		try (InputStream excel = new FileInputStream(new File(rutaArchivo))) {
+	public Convert(File fileToConvert) {
+		try (InputStream excel = new FileInputStream(fileToConvert)) {
 			try (XSSFWorkbook worbook = new XSSFWorkbook(excel)) {
 	    		XSSFSheet sheet = worbook.getSheetAt(0);
-	    		dvm = new DVM();
+	    		archiveDVM = new DomainValueMap();
 	    		List<Row> sheetList = StreamSupport.stream(sheet.spliterator(), false).collect(Collectors.toList());
 	    		sheetList.stream().map(rowList -> {
 	    			List<Cell> cellList= StreamSupport.stream(rowList.spliterator(), false).collect(Collectors.toList());
@@ -37,10 +37,10 @@ public class Convert {
 	    			fila.add("<row>");
 	    			cellList.forEach(cell -> fila.add("<cell>"+cell+"</cell>"));
 	    			fila.add("</row>");
-	    			dvm.setRow(fila);
+	    			archiveDVM.setDataRowList(fila);
 	    			return cellList.stream();
 	    		}).collect(Collectors.toList());
-    			logger.info(dvm.getData().get(0));
+    			logger.info(archiveDVM.getDataRowList().get(0));
 
 			}
     		
@@ -50,17 +50,17 @@ public class Convert {
 	}
 	public StringBuilder getAllRowDVMFormat() {
 		StringBuilder dvmBody = new StringBuilder();
-		dvm.getData().stream().flatMap(numFila -> numFila.stream()).forEach(cell -> dvmBody.append(cell).append(System.lineSeparator()));
+		archiveDVM.getDataRowList().stream().flatMap(numFila -> numFila.stream()).forEach(cell -> dvmBody.append(cell).append(System.lineSeparator()));
 		return dvmBody;
 	}
 	public StringBuilder getAllDocument() {
 		StringBuilder dvmDocument = new StringBuilder();
-		int lengthColumnHead = dvm.getData().get(0).stream().mapToInt(t -> t.length()+2).sum();
+		int lengthColumnHead = archiveDVM.getDataRowList().get(0).stream().mapToInt(t -> t.length()+2).sum();
 		dvmDocument.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append(System.lineSeparator())
-			.append("<dvm name=\""+dvm.getNombre()+"\" xmlns=\"http://xmlns.oracle.com/dvm\">").append(System.lineSeparator())
-			.append("<description>"+dvm.getDescripcion()+"</description>").append(System.lineSeparator())
+			.append("<dvm name=\""+archiveDVM.getName()+"\" xmlns=\"http://xmlns.oracle.com/dvm\">").append(System.lineSeparator())
+			.append("<description>"+archiveDVM.getDescription()+"</description>").append(System.lineSeparator())
 			.append("<columns>").append(System.lineSeparator());
-		dvm.getData().get(0).stream()
+		archiveDVM.getDataRowList().get(0).stream()
 			.filter(cell -> cell.contains("<cell>"))
 			.forEach(columnName -> dvmDocument.append("<column name=\""+columnName.substring(6, columnName.length()-7)+"\"/>").append(System.lineSeparator()));
 		dvmDocument.append("</columns>").append(System.lineSeparator())
