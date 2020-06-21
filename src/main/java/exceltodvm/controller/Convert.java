@@ -37,20 +37,30 @@ public class Convert {
 	    			archiveDVM.setDataRowList(fila);
 	    			return cellList.stream();
 	    		}).collect(Collectors.toList());
-    			logger.info(archiveDVM.getDataRowList().get(0));
-
 			}
     		
     	} catch (Exception e) {
-    		logger.error("Error: %s",e.getMessage());
+    		logger.error("Error: " + e.getMessage());
     	}      
 	}
+	
 	public StringBuilder getAllRowDVMFormat() {
 		StringBuilder dvmBody = new StringBuilder();
 		archiveDVM.getDataRowList().stream().flatMap(numFila -> numFila.stream()).forEach(cell -> dvmBody.append(cell).append(System.lineSeparator()));
 		return dvmBody;
 	}
-	public StringBuilder getAllDocument() {
+	
+	public StringBuilder getAllDocument(String...args) {
+		if(args[0].isEmpty()) {
+			archiveDVM.setName("untitled1");
+		} else {
+			archiveDVM.setName(args[0]);
+		}
+		if(args[1].isEmpty()) {
+			archiveDVM.setDescription("");
+		} else {
+			archiveDVM.setDescription(args[1]);
+		}
 		StringBuilder dvmDocument = new StringBuilder();
 		int lengthColumnHead = archiveDVM.getDataRowList().get(0).stream().mapToInt(t -> t.length()+2).sum();
 		dvmDocument.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append(System.lineSeparator())
