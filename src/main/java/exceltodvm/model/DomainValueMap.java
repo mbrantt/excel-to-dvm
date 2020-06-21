@@ -1,10 +1,9 @@
 package exceltodvm.model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DomainValueMap extends Archive{
-	private List<ArrayList<String>> dataRowList;
+	private ArrayList<ArrayList<String>> dataRowList;
 	
 	public DomainValueMap(String nameArchiveDVM) {
 		super(nameArchiveDVM);
@@ -12,9 +11,10 @@ public class DomainValueMap extends Archive{
 	
 	public DomainValueMap() {
 		super();
+		dataRowList = new ArrayList<>();
 	}
 	
-	public List<ArrayList<String>> getDataRowList() {
+	public ArrayList<ArrayList<String>> getDataRowList() {
 		return dataRowList;
 	}
 	
