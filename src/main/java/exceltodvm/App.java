@@ -19,6 +19,8 @@ public class App {
 			Convert app=new Convert(archivo.getLoadFile());
 			logger.info("Starting APP");
 			app.getAllDocument(archivo.getName(), archivo.getDescription());
+			logger.debug("Origin file: " + archivo.getPathOrigin());
+			logger.debug("Destination file: " + archivo.getPathDestination());
 		}
 		
 	}
