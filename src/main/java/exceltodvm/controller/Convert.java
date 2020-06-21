@@ -19,7 +19,7 @@ import exceltodvm.model.DomainValueMap;
 
 public class Convert {
 	private DomainValueMap archiveDVM;
-	private ArrayList<String> fila;
+	private ArrayList<String> lineCollectorForDVM;
 	private static final Logger logger = LogManager.getLogger(Convert.class);
 	
 	public Convert(File fileToConvert) {
@@ -30,11 +30,11 @@ public class Convert {
 	    		List<Row> sheetList = StreamSupport.stream(sheet.spliterator(), false).collect(Collectors.toList());
 	    		sheetList.stream().map(rowList -> {
 	    			List<Cell> cellList= StreamSupport.stream(rowList.spliterator(), false).collect(Collectors.toList());
-	    			fila = new ArrayList<>();
-	    			fila.add("<row>");
-	    			cellList.forEach(cell -> fila.add("<cell>"+cell+"</cell>"));
-	    			fila.add("</row>");
-	    			archiveDVM.setDataRowList(fila);
+	    			lineCollectorForDVM = new ArrayList<>();
+	    			lineCollectorForDVM.add("<row>");
+	    			cellList.forEach(cell -> lineCollectorForDVM.add("<cell>"+cell+"</cell>"));
+	    			lineCollectorForDVM.add("</row>");
+	    			archiveDVM.setDataRowList(lineCollectorForDVM);
 	    			return cellList.stream();
 	    		}).collect(Collectors.toList());
 			}
