@@ -40,6 +40,7 @@ public abstract class Archive implements ArchiveInterface{
 		try(FileOutputStream fileOut = new FileOutputStream(new File(getPathDestination()))) {
 			fileOut.write(documentToSave.toString().getBytes());
 			fileOut.flush();
+			logger.info("Saved file.");
 		} catch (FileNotFoundException e) {
 			logger.error("File Error: %s", e);
 		} catch (IOException e) {
