@@ -66,7 +66,7 @@ public class Convert {
 			.append("<rows>").append(System.lineSeparator())
 			.append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>")
 			.append("</dvm>");
-		logger.info(dvmDocument);
+		logger.debug(dvmDocument);
 		return dvmDocument;
 	}
 }
