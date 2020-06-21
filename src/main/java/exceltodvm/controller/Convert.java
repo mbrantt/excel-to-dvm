@@ -50,17 +50,9 @@ public class Convert {
 		return dvmBody;
 	}
 	
-	public StringBuilder getAllDocument(String...args) {
-		if(args[0].isEmpty()) {
-			archiveDVM.setName("untitled1");
-		} else {
-			archiveDVM.setName(args[0]);
-		}
-		if(args[1].isEmpty()) {
-			archiveDVM.setDescription("");
-		} else {
-			archiveDVM.setDescription(args[1]);
-		}
+	public StringBuilder getAllDocument(String name, String description) {
+		archiveDVM.setName(name);
+		archiveDVM.setDescription(description);
 		StringBuilder dvmDocument = new StringBuilder();
 		int lengthColumnHead = archiveDVM.getDataRowList().get(0).stream().mapToInt(t -> t.length()+2).sum();
 		dvmDocument.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append(System.lineSeparator())
