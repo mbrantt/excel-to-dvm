@@ -4,7 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import exceltodvm.controller.Convert;
-import exceltodvm.model.Load;
+import exceltodvm.model.Archive;
+import exceltodvm.model.ExcelFile;
 
 /**
  * @author Mauricio Brantt Caceres
@@ -13,12 +14,13 @@ import exceltodvm.model.Load;
 public class App {
 	private static final Logger logger = LogManager.getLogger(App.class);
 	public static void main(String[] args) {
-		Load archivo = new Load();
-		if(!archivo.getRutaArchivo().isEmpty()) {
-			Convert app=new Convert(archivo.getRutaArchivo());
-			//System.out.println(app.getAllRowDVMFormat());
+		Archive archivo = new ExcelFile();
+		if(!archivo.getPathOrigin().isEmpty()) {
+			Convert app=new Convert(archivo.getLoadFile());
 			logger.info("Starting APP");
-			app.getAllDocument();
+			app.getAllDocument(archivo.getName(), archivo.getDescription());
+			logger.debug("Origin file: " + archivo.getPathOrigin());
+			logger.debug("Destination file: " + archivo.getPathDestination());
 		}
 		
 	}
