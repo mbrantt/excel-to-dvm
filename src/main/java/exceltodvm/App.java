@@ -18,9 +18,10 @@ public class App {
 		if(!archivo.getPathOrigin().isEmpty()) {
 			Convert app=new Convert(archivo.getLoadFile());
 			logger.info("Starting APP");
-			app.getAllDocument(archivo.getName(), archivo.getDescription());
-			logger.debug("Origin file: " + archivo.getPathOrigin());
-			logger.debug("Destination file: " + archivo.getPathDestination());
+			archivo.setPathDestination(archivo.getPathOrigin()+".dvm");
+			archivo.save(app.getAllDocument(archivo.getName(), archivo.getDescription()));
+			logger.info("Origin file: " + archivo.getPathOrigin());
+			logger.info("Destination file: " + archivo.getPathDestination());
 		}
 		
 	}
