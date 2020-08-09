@@ -63,8 +63,8 @@ public class Convert {
 			.filter(cell -> cell.contains("<cell>"))
 			.forEach(columnName -> dvmDocument.append("<column name=\""+columnName.substring(6, columnName.length()-7)+"\"/>").append(System.lineSeparator()));
 		dvmDocument.append("</columns>").append(System.lineSeparator())
-			.append("<rows>").append(System.lineSeparator())
-			.append(getAllRowDVMFormat().delete(0, lengthColumnHead)).append("</rows>")
+			.append("<rows>")//.append(System.lineSeparator())
+			.append(getAllRowDVMFormat().delete(0, lengthColumnHead + 1)).append("</rows>")
 			.append("</dvm>");
 		logger.debug(dvmDocument);
 		return dvmDocument;
