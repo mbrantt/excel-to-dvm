@@ -20,7 +20,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -33,16 +32,17 @@ import exceltodvm.model.ExcelFile;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.border.EmptyBorder;
-import javax.swing.BoxLayout;
 
 public class App {
 
 	private JFrame frame;
 	private JTextField txtName,txtDescription;
-	private JPanel topPanel1, botPanel1, panelOption, panelConfig, panelCode, panelButton;
+	private JPanel topPanel1, botPanel1, panelLoad, panelConfig, panelCode, panelOption;
 	private JRadioButton rdbtnOnlyRow,rdbtnDocument;
 	private JButton btnSaveFile, btnCopyCode, btnClear, btnNewFile;
 	private JTextArea textAreaCode;
+	private JPanel panelLoadButton;
+	private JPanel panelOptionButton;
 	private Archive archivo;
 	private Convert app;
 
@@ -74,13 +74,14 @@ public class App {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		archivo = new ExcelFile();
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 560, 500);
+		frame.setBounds(100, 100, 620, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{280, 140, 140};
-		gridBagLayout.rowHeights = new int[]{162, 162, 0};
+		gridBagLayout.columnWidths = new int[]{314, 148, 153};
+		gridBagLayout.rowHeights = new int[]{130, 162, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 1.0};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
@@ -90,33 +91,34 @@ public class App {
 		JPanel topPanel2 = new JPanel();
 		topPanel2.setLayout(new FlowLayout());
 		
-		panelOption = new JPanel();
-		panelOption.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Load", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		panelOption.setPreferredSize(new Dimension(265, 160));
-		panelOption.setMaximumSize(panelOption.getPreferredSize());
-		panelOption.setMinimumSize(panelOption.getPreferredSize());
-		topPanel1.add(panelOption);
-		panelOption.setLayout(new FlowLayout());
+		panelLoad = new JPanel();
+		panelLoad.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Load", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		panelLoad.setPreferredSize(new Dimension(265, 130));
+		panelLoad.setMaximumSize(panelLoad.getPreferredSize());
+		panelLoad.setMinimumSize(panelLoad.getPreferredSize());
+		topPanel1.add(panelLoad);
+		panelLoad.setLayout(new FlowLayout());
 		
 		rdbtnDocument = new JRadioButton("Document");
 		rdbtnDocument.setSelected(true);
-		rdbtnDocument.addActionListener(eventRadioButton);
-		panelOption.add(rdbtnDocument);
+		
+		panelLoad.add(rdbtnDocument);
 		
 		rdbtnOnlyRow = new JRadioButton("Only row");
-		rdbtnOnlyRow.addActionListener(eventRadioButton);
-		panelOption.add(rdbtnOnlyRow);
+		
+		panelLoad.add(rdbtnOnlyRow);
 		
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnOnlyRow);
 		group.add(rdbtnDocument);
 		
-		panel = new JPanel();
-		panel.setBorder(new EmptyBorder(30, 0, 0, 0));
-		panelOption.add(panel);
+		panelLoadButton = new JPanel();
+		panelLoadButton.setBorder(new EmptyBorder(30, 0, 0, 0));
+		panelLoad.add(panelLoadButton);
 		
 		btnNewFile = new JButton("Load new Excel");
-		panel.add(btnNewFile);
+		
+		panelLoadButton.add(btnNewFile);
 		
 		GridBagConstraints gbc_topPanel = new GridBagConstraints();
 		gbc_topPanel.fill = GridBagConstraints.BOTH;
@@ -134,7 +136,7 @@ public class App {
 		
 		panelConfig = new JPanel();
 		panelConfig.setBorder(new TitledBorder(null, "Config", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelConfig.setPreferredSize(new Dimension(265, 160));
+		panelConfig.setPreferredSize(new Dimension(265, 130));
 		panelConfig.setMaximumSize(panelConfig.getPreferredSize());
 		panelConfig.setMinimumSize(panelConfig.getPreferredSize());
 		topPanel2.add(panelConfig);
@@ -150,53 +152,23 @@ public class App {
 		txtName = new JTextField();
 		
 		panelConfig.add(txtName);
-		txtName.setColumns(10);
-		txtName.getDocument().addDocumentListener(new DocumentListener() {
-		    @Override
-		    public void insertUpdate(DocumentEvent e) {
-		    	eventNameAndDescriptionChangeText();
-		    }
-
-		    @Override
-		    public void removeUpdate(DocumentEvent e) {
-		    	eventNameAndDescriptionChangeText();
-		    }
-
-		    @Override
-		    public void changedUpdate(DocumentEvent e) {
-		    	eventNameAndDescriptionChangeText();
-		    }
-		});
+		txtName.setColumns(15);
+		
 		
 		JLabel lblDescription = new JLabel("Description:");
 		panelConfig.add(lblDescription);
 		
 		txtDescription = new JTextField();
 		panelConfig.add(txtDescription);
-		txtDescription.setColumns(10);
-		txtDescription.getDocument().addDocumentListener(new DocumentListener() {
-		    @Override
-		    public void insertUpdate(DocumentEvent e) {
-		    	eventNameAndDescriptionChangeText();
-		    }
-
-		    @Override
-		    public void removeUpdate(DocumentEvent e) {
-		    	eventNameAndDescriptionChangeText();
-		    }
-
-		    @Override
-		    public void changedUpdate(DocumentEvent e) {
-		    	eventNameAndDescriptionChangeText();
-		    }
-		});
+		txtDescription.setColumns(15);
+		
 		
 		
 		botPanel1 = new JPanel();
 		botPanel1.setLayout(new FlowLayout());
 		panelCode = new JPanel();
 		panelCode.setBorder(new TitledBorder(null, "Code Preview", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelCode.setPreferredSize(new Dimension(400, 280));
+		panelCode.setPreferredSize(new Dimension(450, 320));
 		panelCode.setMaximumSize(panelCode.getPreferredSize());
 		panelCode.setMinimumSize(panelCode.getPreferredSize());
 		botPanel1.add(panelCode);
@@ -206,8 +178,9 @@ public class App {
 		
 		textAreaCode = new JTextArea();
 		textAreaCode.setEditable(false);
+
 		JScrollPane scroll=new JScrollPane(textAreaCode);
-		scroll.setPreferredSize(new Dimension(380, 250));
+		scroll.setPreferredSize(new Dimension(420, 280));
 		panelCode.add(scroll);
 		
 		GridBagConstraints gbc_botPanel1 = new GridBagConstraints();
@@ -227,42 +200,109 @@ public class App {
 		//botPanel2.setLayout(new FlowLayout());
 		//botPanel2.setLayout(new BorderLayout());
 		
-		panelButton = new JPanel();
-		panelButton.setBorder(new TitledBorder(null, "Option", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelOption = new JPanel();
+		panelOption.setBorder(new TitledBorder(null, "Option", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		//panelButton.setLayout(new BoxLayout(panelButton,BoxLayout.Y_AXIS));
-		panelButton.setLayout(new FlowLayout(FlowLayout.CENTER));
+		FlowLayout fl_panelOption = new FlowLayout(FlowLayout.CENTER);
+		fl_panelOption.setVgap(10);
+		panelOption.setLayout(fl_panelOption);
 	
 		//panelButton.setLayout(new BorderLayout());
-		panelButton.setPreferredSize(new Dimension(140, 280));
-		panelButton.setMaximumSize(panelButton.getPreferredSize());
-		panelButton.setMinimumSize(panelButton.getPreferredSize());
-		botPanel2.add(panelButton, BorderLayout.PAGE_END);
+		panelOption.setPreferredSize(new Dimension(140, 280));
+		panelOption.setMaximumSize(panelOption.getPreferredSize());
+		panelOption.setMinimumSize(panelOption.getPreferredSize());
+		botPanel2.add(panelOption, BorderLayout.PAGE_END);
 		
-		panel_1 = new JPanel();
-		panel_1.setBorder(new EmptyBorder(30, 0, 0, 0));
-		panel_1.setPreferredSize(new Dimension(130, 200));
-		panel_1.setMaximumSize(panelButton.getPreferredSize());
-		panel_1.setMinimumSize(panelButton.getPreferredSize());
-		panelButton.add(panel_1);
-		FlowLayout fl_panel_1 = new FlowLayout(FlowLayout.CENTER, 5, 20);
-		panel_1.setLayout(fl_panel_1);
+		panelOptionButton = new JPanel();
+		panelOptionButton.setBorder(new EmptyBorder(30, 0, 0, 0));
+		panelOptionButton.setPreferredSize(new Dimension(130, 200));
+		panelOptionButton.setMaximumSize(panelOption.getPreferredSize());
+		panelOptionButton.setMinimumSize(panelOption.getPreferredSize());
+		panelOption.add(panelOptionButton);
+		FlowLayout fl_panelOptionButton = new FlowLayout(FlowLayout.CENTER, 5, 20);
+		panelOptionButton.setLayout(fl_panelOptionButton);
 		btnSaveFile = new JButton("Save File");
-		panel_1.add(btnSaveFile);
+		
+		panelOptionButton.add(btnSaveFile);
 		
 		btnCopyCode = new JButton("Copy Code");
-		panel_1.add(btnCopyCode);
+		panelOptionButton.add(btnCopyCode);
 		
 		btnClear = new JButton("Clean");
-		panel_1.add(btnClear);
-		btnClear.addActionListener(eventClean);
+		panelOptionButton.add(btnClear);
+		
+		// Events
+		txtName.getDocument().addDocumentListener(new DocumentListener() {
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+		    	eventNameAndDescriptionChangeText();
+		    }
+
+		    @Override
+		    public void removeUpdate(DocumentEvent e) {
+		    	eventNameAndDescriptionChangeText();
+		    }
+
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {
+		    	eventNameAndDescriptionChangeText();
+		    }
+		});
+		txtDescription.getDocument().addDocumentListener(new DocumentListener() {
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+		    	eventNameAndDescriptionChangeText();
+		    }
+
+		    @Override
+		    public void removeUpdate(DocumentEvent e) {
+		    	eventNameAndDescriptionChangeText();
+		    }
+
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {
+		    	eventNameAndDescriptionChangeText();
+		    }
+		});
+		// Button
+		btnClear.addActionListener(event ->{
+		      JButton button = (JButton) event.getSource();
+		       if (button == btnClear) {
+		        	textAreaCode.setText("");
+		       }
+		});
+		btnNewFile.addActionListener(event -> {
+			JButton button = (JButton) event.getSource();
+			if (button == btnNewFile) {
+				archivo.load();
+				logicApp();
+			}
+		});
+		btnSaveFile.addActionListener(event -> {
+			event.getSource();
+			archivo.save(app.getAllDocument(txtName.getText(), txtDescription.getText()));
+		});
+		// RadioButton
+		rdbtnDocument.addActionListener(eventRadioButton);
+		rdbtnOnlyRow.addActionListener(eventRadioButton);
 	}
 	public void logicApp() {
-		archivo = new ExcelFile();
 		if(!archivo.getPathOrigin().isEmpty()) {
+			rdbtnDocument.setEnabled(true);
+			rdbtnOnlyRow.setEnabled(true);
+			btnSaveFile.setEnabled(true);
+			txtDescription.setEnabled(true);
+			txtName.setEnabled(true);
 			app = new Convert(archivo.getLoadFile());
 			txtName.setText(archivo.getName() + ".dvm");
 			txtDescription.setText(archivo.getDescription());
 			textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
+		}else {
+			rdbtnDocument.setEnabled(false);
+			rdbtnOnlyRow.setEnabled(false);
+			btnSaveFile.setEnabled(false);
+			txtDescription.setEnabled(false);
+			txtName.setEnabled(false);
 		}
 	}
 	 ActionListener eventRadioButton = new ActionListener() {
@@ -275,8 +315,6 @@ public class App {
 					btnSaveFile.setEnabled(true);
 					textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
 		        } else if (button == rdbtnOnlyRow) {
-		        	// txtName.setText("");
-					// txtDescription.setText("");
 		        	txtName.setEnabled(false);
 					txtDescription.setEnabled(false);
 					btnSaveFile.setEnabled(false);
@@ -285,29 +323,9 @@ public class App {
 		    }
 		
 	 };
-	 ActionListener eventClean = new ActionListener() {
-		 public void actionPerformed(ActionEvent event) {
-		        JButton button = (JButton) event.getSource();
-		 
-		        if (button == btnClear) {
-		        	textAreaCode.setText("");
-		        }
-		    }
-		
-	 };
-	 ActionListener eventNameTextbox = new ActionListener() {
-		 public void actionPerformed(ActionEvent event) {
-		        JTextField txt = (JTextField) event.getSource();
-		 
-		        if (txt == txtName) {
-		        	textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
-		        }
-		    }
-		
-	 };
-	 private JPanel panel;
-	 private JPanel panel_1;
 	 public void eventNameAndDescriptionChangeText(){
+		 archivo.setName(txtName.getText());
+		 archivo.setDescription(txtDescription.getText());
 		 textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
 	 }
 	
