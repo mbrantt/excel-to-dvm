@@ -13,6 +13,9 @@ import java.awt.Dimension;
 
 import javax.swing.JScrollPane;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -229,6 +233,7 @@ public class App {
 		panelOptionButton.add(btnCopyCode);
 		
 		btnClear = new JButton("Clean");
+		btnClear.setEnabled(false);
 		panelOptionButton.add(btnClear);
 		
 		// Events
@@ -281,6 +286,17 @@ public class App {
 		btnSaveFile.addActionListener(event -> {
 			event.getSource();
 			archivo.save(app.getAllDocument(txtName.getText(), txtDescription.getText()));
+		});
+		btnCopyCode.addActionListener(event -> {
+			if(textAreaCode.getText().equals("") || textAreaCode.getText() == null || textAreaCode == null) {
+				JOptionPane.showMessageDialog(frame, "There is nothing to copy.","Warning",JOptionPane.WARNING_MESSAGE);
+			}
+			else {
+				StringSelection stringSelection = new StringSelection(textAreaCode.getText());
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(stringSelection, null);
+				JOptionPane.showMessageDialog(frame, "Text copied to the clipboard!");
+			}
 		});
 		// RadioButton
 		rdbtnDocument.addActionListener(eventRadioButton);
