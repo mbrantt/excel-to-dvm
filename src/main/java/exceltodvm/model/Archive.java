@@ -31,7 +31,7 @@ public abstract class Archive implements ArchiveInterface{
 			loadFile = file.getSelectedFile();
 			this.name = loadFile.getName();
 			this.pathOrigin = loadFile.getPath();
-		}else{
+		}else if(this.pathOrigin == null || this.pathOrigin == ""){
 			loadFile = null;
 			this.name = "";
 			this.pathOrigin = "";
@@ -44,7 +44,8 @@ public abstract class Archive implements ArchiveInterface{
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int retrival = chooser.showSaveDialog(null);
 		if(retrival == JFileChooser.APPROVE_OPTION) {
-			try(FileOutputStream fileOut = new FileOutputStream(new File(chooser.getSelectedFile() + "/" + name))) {
+			pathDestination = chooser.getSelectedFile().toString();
+			try(FileOutputStream fileOut = new FileOutputStream(new File(pathDestination + "/" + name))) {
 				fileOut.write(documentToSave.toString().getBytes());
 				fileOut.flush();
 				logger.info("Saved file.");
