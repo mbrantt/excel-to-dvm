@@ -25,16 +25,20 @@ public abstract class Archive implements ArchiveInterface{
 	}
 	@Override
 	public void load() {
-		JFileChooser file = new JFileChooser();
-		int accion = file.showOpenDialog(file);
-		if(accion == JFileChooser.APPROVE_OPTION) {
-			loadFile = file.getSelectedFile();
-			this.name = loadFile.getName();
-			this.pathOrigin = loadFile.getPath();
-		}else if(this.pathOrigin == null || this.pathOrigin == ""){
-			loadFile = null;
-			this.name = "";
-			this.pathOrigin = "";
+		try {
+			JFileChooser file = new JFileChooser();
+			int accion = file.showOpenDialog(file);
+			if(accion == JFileChooser.APPROVE_OPTION) {
+				loadFile = file.getSelectedFile();
+				this.name = loadFile.getName();
+				this.pathOrigin = loadFile.getPath();
+			}else if(this.pathOrigin == null || this.pathOrigin == ""){
+				loadFile = null;
+				this.name = "";
+				this.pathOrigin = "";
+			}
+		} catch(Exception e) {
+			logger.error("Error: " + e.getMessage());
 		}
 	}
 	@Override
@@ -50,9 +54,9 @@ public abstract class Archive implements ArchiveInterface{
 				fileOut.flush();
 				logger.info("Saved file.");
 			} catch (FileNotFoundException e) {
-				logger.error("File Error: %s", e);
+				logger.error("File Error: " + e);
 			} catch (IOException e) {
-				logger.error("Error: %s", e);
+				logger.error("Error: " + e);
 			}
 		}
 		
