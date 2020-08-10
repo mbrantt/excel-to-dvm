@@ -32,19 +32,27 @@ public abstract class Archive implements ArchiveInterface{
 			this.name = loadFile.getName();
 			this.pathOrigin = loadFile.getPath();
 		}else{
-			System.exit(0);
+			loadFile = null;
+			this.name = "";
+			this.pathOrigin = "";
 		}
 	}
 	@Override
 	public void save(StringBuilder documentToSave) {
-		try(FileOutputStream fileOut = new FileOutputStream(new File(getPathDestination()))) {
-			fileOut.write(documentToSave.toString().getBytes());
-			fileOut.flush();
-			logger.info("Saved file.");
-		} catch (FileNotFoundException e) {
-			logger.error("File Error: %s", e);
-		} catch (IOException e) {
-			logger.error("Error: %s", e);
+		JFileChooser chooser = new JFileChooser();
+		
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int retrival = chooser.showSaveDialog(null);
+		if(retrival == JFileChooser.APPROVE_OPTION) {
+			try(FileOutputStream fileOut = new FileOutputStream(new File(chooser.getSelectedFile() + "/" + name))) {
+				fileOut.write(documentToSave.toString().getBytes());
+				fileOut.flush();
+				logger.info("Saved file.");
+			} catch (FileNotFoundException e) {
+				logger.error("File Error: %s", e);
+			} catch (IOException e) {
+				logger.error("Error: %s", e);
+			}
 		}
 		
 	}
