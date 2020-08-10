@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import javax.swing.JTextArea;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
@@ -49,7 +50,6 @@ public class App {
 	private JPanel panelOptionButton;
 	private Archive archivo;
 	private Convert app;
-
 	/**
 	 * Launch the application.
 	 */
@@ -158,16 +158,13 @@ public class App {
 		panelConfig.add(txtName);
 		txtName.setColumns(15);
 		
-		
 		JLabel lblDescription = new JLabel("Description:");
 		panelConfig.add(lblDescription);
 		
 		txtDescription = new JTextField();
 		panelConfig.add(txtDescription);
 		txtDescription.setColumns(15);
-		
-		
-		
+
 		botPanel1 = new JPanel();
 		botPanel1.setLayout(new FlowLayout());
 		panelCode = new JPanel();
@@ -201,17 +198,13 @@ public class App {
 		gbc_botPanel2.gridx = 2;
 		gbc_botPanel2.gridy = 1;
 		frame.getContentPane().add(botPanel2, gbc_botPanel2);
-		//botPanel2.setLayout(new FlowLayout());
-		//botPanel2.setLayout(new BorderLayout());
 		
 		panelOption = new JPanel();
 		panelOption.setBorder(new TitledBorder(null, "Option", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		//panelButton.setLayout(new BoxLayout(panelButton,BoxLayout.Y_AXIS));
 		FlowLayout fl_panelOption = new FlowLayout(FlowLayout.CENTER);
 		fl_panelOption.setVgap(10);
 		panelOption.setLayout(fl_panelOption);
 	
-		//panelButton.setLayout(new BorderLayout());
 		panelOption.setPreferredSize(new Dimension(140, 280));
 		panelOption.setMaximumSize(panelOption.getPreferredSize());
 		panelOption.setMinimumSize(panelOption.getPreferredSize());
@@ -236,7 +229,7 @@ public class App {
 		btnClear.setEnabled(false);
 		panelOptionButton.add(btnClear);
 		
-		// Events
+		// Events JTextField
 		txtName.getDocument().addDocumentListener(new DocumentListener() {
 		    @Override
 		    public void insertUpdate(DocumentEvent e) {
@@ -269,7 +262,7 @@ public class App {
 		    	eventNameAndDescriptionChangeText();
 		    }
 		});
-		// Button
+		// Events JButton
 		btnClear.addActionListener(event ->{
 		      JButton button = (JButton) event.getSource();
 		       if (button == btnClear) {
@@ -286,6 +279,12 @@ public class App {
 		btnSaveFile.addActionListener(event -> {
 			event.getSource();
 			archivo.save(app.getAllDocument(txtName.getText(), txtDescription.getText()));
+			if(archivo.getPathDestination() != null) {
+				JOptionPane.showMessageDialog(frame, "File saved in "+ archivo.getPathDestination());
+			}else {
+				JOptionPane.showMessageDialog(frame, "File not saved","Warning",JOptionPane.WARNING_MESSAGE);
+			}
+			
 		});
 		btnCopyCode.addActionListener(event -> {
 			if(textAreaCode.getText().equals("") || textAreaCode.getText() == null || textAreaCode == null) {
@@ -298,22 +297,31 @@ public class App {
 				JOptionPane.showMessageDialog(frame, "Text copied to the clipboard!");
 			}
 		});
-		// RadioButton
+		// Events RadioButton
 		rdbtnDocument.addActionListener(eventRadioButton);
 		rdbtnOnlyRow.addActionListener(eventRadioButton);
 	}
 	public void logicApp() {
-		if(!archivo.getPathOrigin().isEmpty()) {
-			rdbtnDocument.setEnabled(true);
-			rdbtnOnlyRow.setEnabled(true);
-			btnSaveFile.setEnabled(true);
-			txtDescription.setEnabled(true);
-			txtName.setEnabled(true);
-			app = new Convert(archivo.getLoadFile());
-			txtName.setText(archivo.getName() + ".dvm");
-			txtDescription.setText(archivo.getDescription());
-			textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
-		}else {
+		try {
+			if(!archivo.getPathOrigin().isEmpty()) {
+				rdbtnDocument.setEnabled(true);
+				rdbtnOnlyRow.setEnabled(true);
+				btnSaveFile.setEnabled(true);
+				txtDescription.setEnabled(true);
+				txtName.setEnabled(true);
+				app = new Convert(archivo.getLoadFile());
+				txtName.setText(archivo.getName());
+				txtDescription.setText(archivo.getDescription());
+				textAreaCode.setText(app.getAllDocument(archivo.getName(), archivo.getDescription()).toString());
+			}else {
+				rdbtnDocument.setEnabled(false);
+				rdbtnOnlyRow.setEnabled(false);
+				btnSaveFile.setEnabled(false);
+				txtDescription.setEnabled(false);
+				txtName.setEnabled(false);
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "An unexpected error has occurred, see details in logging-ETD.log", "Error",JOptionPane.ERROR_MESSAGE);
 			rdbtnDocument.setEnabled(false);
 			rdbtnOnlyRow.setEnabled(false);
 			btnSaveFile.setEnabled(false);
@@ -329,7 +337,7 @@ public class App {
 		        	txtName.setEnabled(true);
 					txtDescription.setEnabled(true);
 					btnSaveFile.setEnabled(true);
-					textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
+					textAreaCode.setText(app.getAllDocument(archivo.getName(), archivo.getDescription()).toString());
 		        } else if (button == rdbtnOnlyRow) {
 		        	txtName.setEnabled(false);
 					txtDescription.setEnabled(false);
@@ -340,9 +348,9 @@ public class App {
 		
 	 };
 	 public void eventNameAndDescriptionChangeText(){
-		 archivo.setName(txtName.getText());
+		 archivo.setName(txtName.getText() + ".dvm");
 		 archivo.setDescription(txtDescription.getText());
-		 textAreaCode.setText(app.getAllDocument(txtName.getText(), txtDescription.getText()).toString());
+		 textAreaCode.setText(app.getAllDocument(archivo.getName(), archivo.getDescription()).toString());
 	 }
 	
 }
