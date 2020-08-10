@@ -5,13 +5,18 @@
 			<PatternLayout
 				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
+		
+	    <File name="File" fileName="logging-ETD.log">
+	        <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+	    </File> 
 	</Appenders>
 	<Loggers>
 		<Logger name="org.apache.logging.log4j.test1" level="debug" additivity="false">
 	      <AppenderRef ref="Console"/>
 	    </Logger>
-		<Root level="INFO">
+		<Root level="ERROR">
 			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
 		</Root>
 	</Loggers>
 </Configuration>
